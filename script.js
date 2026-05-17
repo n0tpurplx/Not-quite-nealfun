@@ -95,6 +95,66 @@ function checkPasswordStrength() {
     `;
 }
 
+// ==================== PASSWORD GAME ====================
+document.getElementById('game-password')?.addEventListener('input', checkPasswordGame);
+
+function checkPasswordGame() {
+    const password = document.getElementById('game-password').value;
+
+    const rules = {
+        length: password.length >= 8,
+        uppercase: /[A-Z]/.test(password),
+        number: /\d/.test(password),
+        special: /[!@#$%]/.test(password),
+        noPassword: !password.toLowerCase().includes('password'),
+        bigNumber: /[6-9]/.test(password),
+        hasVowel: /[aeiouAEIOU]/.test(password),
+        consecutiveNumbers: /\d\d/.test(password),
+        lengthMultiple: password.length % 3 === 0,
+        romanNumeral: /[IVXLCDMivxlcdm]/.test(password)
+    };
+
+    // Update rule displays
+    updateRuleDisplay('rule-1', rules.length);
+    updateRuleDisplay('rule-2', rules.uppercase);
+    updateRuleDisplay('rule-3', rules.number);
+    updateRuleDisplay('rule-4', rules.special);
+    updateRuleDisplay('rule-5', rules.noPassword);
+    updateRuleDisplay('rule-6', rules.bigNumber);
+    updateRuleDisplay('rule-7', rules.hasVowel);
+    updateRuleDisplay('rule-8', rules.consecutiveNumbers);
+    updateRuleDisplay('rule-9', rules.lengthMultiple);
+    updateRuleDisplay('rule-10', rules.romanNumeral);
+
+    // Check if all rules are met
+    const allRulesMet = Object.values(rules).every(v => v === true);
+    
+    const statusDiv = document.getElementById('game-status');
+    if (allRulesMet && password.length > 0) {
+        statusDiv.classList.remove('hidden');
+    } else {
+        statusDiv.classList.add('hidden');
+    }
+}
+
+function updateRuleDisplay(ruleId, isMet) {
+    const ruleElement = document.getElementById(ruleId);
+    if (isMet) {
+        ruleElement.classList.add('met');
+        ruleElement.querySelector('.rule-icon').textContent = '✓';
+    } else {
+        ruleElement.classList.remove('met');
+        ruleElement.querySelector('.rule-icon').textContent = '✗';
+    }
+}
+
+function resetPasswordGame() {
+    document.getElementById('game-password').value = '';
+    document.getElementById('game-status').classList.add('hidden');
+    checkPasswordGame();
+    document.getElementById('game-password').focus();
+}
+
 // ==================== COLOR MIXER ====================
 function updateColor() {
     const r = document.getElementById('red').value;
@@ -123,7 +183,9 @@ function randomColor() {
 }
 
 // Initialize color
-updateColor();
+if (document.getElementById('red')) {
+    updateColor();
+}
 
 // ==================== JOKE GENERATOR ====================
 const jokes = [
